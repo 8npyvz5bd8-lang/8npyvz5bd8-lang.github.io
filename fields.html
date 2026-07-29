@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Required fields, optional fields, formats, and limits for ProfitSift CSV imports.">
+  <title>CSV field specification — ProfitSift CSV</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="canonical" href="https://8npyvz5bd8-lang.github.io/fields.html">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="ProfitSift CSV home"><span class="brand-mark" aria-hidden="true">PS</span>ProfitSift CSV</a>
+    <nav class="site-nav" aria-label="Primary"><a href="index.html">Product</a><a href="fields.html" aria-current="page">CSV fields</a><a href="errors.html">Error help</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a></nav>
+  </header>
+  <main id="main">
+    <header class="page-hero"><p class="eyebrow">CSV compatibility</p><h1>Make every column say exactly what it means.</h1><p class="lede">ProfitSift accepts up to three UTF-8 CSV files. You map your own headers to the canonical fields below; header names do not need to match these labels.</p></header>
+    <div class="content-grid">
+      <aside class="side-note">No automatic encoding guesses.<br>No fuzzy joins.<br>No silently skipped rows.</aside>
+      <article class="prose">
+        <h2>Required Sales fields</h2>
+        <p>Each Sales CSV row must represent one order item. Unit product cost can come from the Sales CSV or a separate Cost CSV.</p>
+        <div class="table-wrap"><table><thead><tr><th>ProfitSift field</th><th>Meaning</th><th>Rule</th></tr></thead><tbody>
+          <tr><td>Order ID</td><td>Stable order identifier</td><td>Not empty</td></tr>
+          <tr><td>Item ID</td><td>SKU, product ID, or stable product name</td><td>Not empty</td></tr>
+          <tr><td>Quantity</td><td>Units on this order line</td><td>Whole number greater than zero</td></tr>
+          <tr><td>Gross item sales <em>or</em> Net item sales</td><td>Item revenue only; excludes shipping and sales tax</td><td>Non-negative; choose one revenue mode</td></tr>
+          <tr><td>Unit product cost</td><td>Cost for one unit</td><td>Non-negative; map here or join from Cost CSV</td></tr>
+        </tbody></table></div>
+
+        <h2>Optional Sales fields</h2>
+        <div class="table-wrap"><table><thead><tr><th>ProfitSift field</th><th>Meaning</th></tr></thead><tbody>
+          <tr><td>Discount</td><td>Item discount, excluding any shipping discount</td></tr>
+          <tr><td>Refund</td><td>Item refund, excluding returned shipping</td></tr>
+          <tr><td>Shipping income</td><td>Shipping income actually kept after returned shipping</td></tr>
+          <tr><td>Shipping cost</td><td>Actual shipping cost</td></tr>
+          <tr><td>Marketplace fee</td><td>Actual marketplace fee assigned to this line</td></tr>
+          <tr><td>Payment fee</td><td>Actual payment fee assigned to this line</td></tr>
+          <tr><td>Ad cost</td><td>Advertising cost assigned to this line</td></tr>
+          <tr><td>Sales tax</td><td>Tax collected for reconciliation or a fee base; never profit revenue</td></tr>
+          <tr><td>Other cost</td><td>Packaging, storage, support, or another line cost</td></tr>
+        </tbody></table></div>
+
+        <h2>Gross and Net revenue</h2>
+        <div class="callout"><strong>Choose; do not guess.</strong>Both modes require item revenue that excludes shipping and sales tax. A payment total that cannot be separated into items, shipping, and tax is incompatible.</div>
+        <h3>Gross mode</h3><p>Map item sales before item discounts and refunds. ProfitSift subtracts mapped Discount and Refund values.</p>
+        <h3>Net mode</h3><p>Map item revenue after item discounts and refunds. Discount and Refund may be mapped for explanation, but are not subtracted again.</p>
+
+        <h2>Optional Cost CSV</h2>
+        <p>Use exactly two fields: <strong>Item ID</strong> and <strong>Unit product cost</strong>. Item IDs must be unique and must exactly match every Sales Item ID that needs a joined cost.</p>
+
+        <h2>Optional Fee CSV</h2>
+        <p>Use <strong>Order ID</strong> plus any order-level Marketplace fee, Payment fee, or Ad cost. Fee Order IDs must be unique and must exactly match the set of Sales Order IDs.</p>
+        <p>When an order has multiple item rows, choose allocation by net revenue or quantity. The app marks allocated fees and preserves the source fee row.</p>
+
+        <h2>Formats and limits</h2>
+        <ul>
+          <li>UTF-8 or UTF-8 with BOM.</li>
+          <li>Comma or tab delimiter, selected by the user.</li>
+          <li>Standard double-quote escaping.</li>
+          <li>One Sales CSV, one Cost CSV, and one Fee CSV per audit.</li>
+          <li>Sales: up to 50,000 data rows. Cost and Fee: up to 10,000 each.</li>
+          <li>When break-even pricing relies on estimated fees and no fee uses historical actual amounts, each Order ID supports at most 5 Sales rows. Larger orders require actual fee amounts; the app rejects the audit without truncating or guessing.</li>
+          <li>Each file: no more than 25 MB.</li>
+          <li>One user-selected currency for the entire audit; no conversion or mixed currencies.</li>
+          <li>Amounts are non-negative numbers with no currency symbols or thousands separators.</li>
+        </ul>
+        <div class="actions" style="margin-top: 36px"><a class="button" href="sample-sales.csv" download>Download the Sales sample</a><a class="button secondary" href="errors.html">Open error help</a></div>
+      </article>
+    </div>
+  </main>
+  <footer class="site-footer"><div>© ProfitSift CSV. Your source files stay on your Mac.</div><div class="footer-links"><a href="index.html">Product</a><a href="errors.html">Error help</a><a href="privacy.html">Privacy</a><a href="support.html">Support</a></div></footer>
+</body>
+</html>
